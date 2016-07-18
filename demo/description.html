@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<title>插件写法描述</title>
+<meta name="description" content="">
+<meta name="keywords" content="">
+<link href="" rel="stylesheet">
+</head>
+<body>
+	<a href="http://blog.jobbole.com/30550/">描述参考</a><br>
+	<code>
+		(function(arg1,arg2){
+		<br>
+			//代码
+		<br>
+		})(arg1,arg2)
+	</code>
+    <br>
+	<p>每个插件的代码都是被包含在一个<b>即时执行</b>的函数当中，如上</p>
+	<p><b>即时执行</b>是一个函数，让他与众不同的是它被包含在一对小括号里面，这样可以让所有的代码都在匿名函数的局部作用域中运行，这并不是说明DOM(全局变量)在函数内是被屏蔽的，而是表示外部无法访问到函数内部的公共变量和对象命名空间，这样我们在声明自己的的变量和对象的时候就不用担心变量名和已经存在的代码有冲突。</p>
+	<code>
+		(function($){
+		<br>
+			//局部作用域中使用$来引用jQuery
+		<br>
+		})(jQuery);
+	</code>
+	<br>
+	<p>在以上代码中将公共变量<b>jQuery</b>传入了一个即时执行的函数里面，在函数局部(容器)中我们可以通过<b>$</b>来引用它。也就是说，我们把容器当做一个函数来调用，而这个函数的参数就是jQuery。因为我们引用的<b>jQuery</b>作为公共变量传入，而不是它的简写<b>$</b>,这样我们就可以兼容Prototype库。如果不用Prototype或者其他用<b>$</b>做简写的库的话也可以。但是这种写法仍然是一种明智的写法</p>
+	<h4>插件：一个函数</h4>
+	<p>一个<b>jQuery</b>插件本质上是我们塞进<b>jQuery</b>命名空间中一个庞大的函数，当然，我们可以同样使用<b>jQuery.pluginName=function</b>，来达到我们的目的，但是如果我们这样做的话我们的插件的代码是处于没有被保护的暴露状态的。<b>jQuery.fn</b>是<b>jQuery.prototype</b>的简写，意味当我们通过<b>jQuery</b>命名空间去获取我们的插件的时候，它仅可读（不可修改）。它可以让你恰当的组织自己的代码以及理解如何保护你的代码不受运行时候不需要的修改。</p>
+	<p>通过一个插件，我们获得一个基本的<b>jQuery</b>函数</p>
+	<code>
+		(function($){
+		<br>
+			$.fn.pluginName = function(options){
+				<br>
+					//代码在此处运行
+				<br>
+				return this;
+				<br>
+			}
+			<br>
+		})(jQuery);
+	</code>
+	<br>
+	<p>上面的代码中的函数可以像其他的<b>jQuery</b>函数那样通过<b>$('#element').pluginName()</b>来调用。return this这段代码通过返回一个原来元素的集合（包含在this当中）的引用来产生链式调用的效果，而这些元素是被一个<b>jQuery</b>对象所包裹的。<b>this</b>在这个特定的作用域中是一个<b>jQuery</b>对象，相当于<b>$('#element')</b></p>
+</body>
+</html>
